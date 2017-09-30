@@ -135,7 +135,19 @@ public class MyTests {
 	public void testNestedMyHashMap() {
 		MyHashMap<MyHashMap<String>> nestedMap = new MyHashMap<>(4);
 		nestedMap.set("k1", new MyHashMap<String>(4));
+		nestedMap.set("k2", new MyHashMap<String>(4));
+		
 		nestedMap.get("k1").set("innerK1", "innerV1");
-		assertEquals("innerV1", nestedMap.get("k1").get("innerK1"));
+		nestedMap.get("k1").set("innerK2", "innerV2");
+		
+		nestedMap.get("k2").set("innerK3", "innerV3");
+		
+		String[] expecteds = new String[] {"innerV1", "innerV2", "innerV3"};
+		String[] actuals = new String[] 
+				{nestedMap.get("k1").get("innerK1"), 
+				 nestedMap.get("k1").get("innerK2"),
+				 nestedMap.get("k2").get("innerK3")};
+		
+		assertArrayEquals(expecteds, actuals);
 	}
 }
