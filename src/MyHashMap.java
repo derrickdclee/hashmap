@@ -50,31 +50,32 @@ public class MyHashMap<V> {
 		
 		int ind = findInd(key);
 		MyHashEntry curr = hashtable[ind];
-		
 		MyHashEntry entry = new MyHashEntry(key, (Object) value);
 		
 		if (curr == null) {	// there is no element in the bucket
 			hashtable[ind] = entry;
 			size++;
-		} else {    // if there exists an element in the bucket
-			while (curr != null) {
-				if (!curr.key.equals(key)) {
-					// keep moving down the linked list
-					if (curr.next != null) {
-						curr = curr.next;
-					} else { 
-						// reached the end of the linked list
-						// so insert it at the end
-						curr.next = entry;
-						size++;
-						break;
-					}
-				} else {
-					// if there is an element with the same key
-					// override it
-					curr.value = (Object) value;
+			return true;
+		} 
+		
+		// there exists some elements in the bucket
+		while (curr != null) {
+			if (!curr.key.equals(key)) {
+				// keep moving down the linked list
+				if (curr.next != null) {
+					curr = curr.next;
+				} else { 
+					// reached the end of the linked list
+					// so insert it at the end
+					curr.next = entry;
+					size++;
 					break;
 				}
+			} else {
+				// there is an element with the same key
+				// so override it
+				curr.value = (Object) value;
+				break;
 			}
 		}
 		
@@ -88,9 +89,10 @@ public class MyHashMap<V> {
 	@SuppressWarnings("unchecked")
 	public V get(String key) {
 		int ind = findInd(key);
-		if (hashtable[ind] == null) return null;
-		
 		MyHashEntry curr = hashtable[ind];
+		
+		if (curr == null) return null;
+		
 		while (curr != null) {
 			if (!curr.key.equals(key)) {
 				// keep moving down the linked list
@@ -98,11 +100,12 @@ public class MyHashMap<V> {
 					curr = curr.next;
 				} else {
 					// reached the end of the linked list
+					// meaning the key isn't in the map
 					// so return null
 					return null;
 				}
 			} else {
-				// if the match is found, return the value
+				// the match is found, return the value
 				return (V) curr.value; // unchecked casting
 			}
 		}
@@ -131,18 +134,19 @@ public class MyHashMap<V> {
 					curr = curr.next;
 				} else {
 					// reached the end of the linked list
+					// meaning the key isn't in the map
 					// so return null
 					return null;
 				}
 			} else {
-				// if the match is found, delete the entry from the linked list and return the value
+				// the match is found, delete the entry from the linked list and return the value
 				if (prev == null) {
-					// this was a single-element linked list
-					hashtable[ind] = null;
+					// this was the first element in the linked list
+					hashtable[ind] = curr.next;
 				} else {
 					prev.next = curr.next;
-					curr.next = null;
 				}
+				curr.next = null;
 				size--;
 				return (V) curr.value; // unchecked casting
 			}

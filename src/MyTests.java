@@ -150,4 +150,45 @@ public class MyTests {
 		
 		assertArrayEquals(expecteds, actuals);
 	}
+	
+	@Test
+	public void testSetAndGetWithCollision() {
+		MyHashMap<String> map = new MyHashMap<>(4);
+		map.set("AaAa", "v1");
+		map.set("BBBB", "v2");
+		map.set("AaBB", "v3");
+		map.set("BBAa", "v4");
+		
+		String[] expecteds = new String[] {"v1", "v2", "v3", "v4"};
+		String[] actuals = new String[] {
+				map.get("AaAa"), map.get("BBBB"), 
+				map.get("AaBB"), map.get("BBAa")};
+		
+		assertArrayEquals(expecteds, actuals);
+	}
+	
+	@Test
+	public void testDeleteWithCollision() {
+		MyHashMap<String> map = new MyHashMap<>(16);
+		map.set("AaAaAa", "v1");
+		map.set("AaAaBB", "v2");
+		map.set("AaBBAa", "v3");
+		map.set("AaBBBB", "v4");
+		map.set("BBAaBB", "v5");
+		map.set("BBAaAa", "v6");
+		map.set("BBBBAa", "v7");
+		map.set("BBBBBB", "v8");
+		
+		map.delete("AaAaAa"); // deleting v1 
+		map.delete("AaBBAa"); // deleting v3
+		map.delete("AaBBBB"); // deleting v4
+		map.delete("BBAaBB"); // deleting v5
+		map.delete("BBBBAa"); // deleting v7
+		map.delete("BBBBBB"); // deleting v8
+		
+		String[] expecteds = new String[] {"v2","v6"};
+		String[] actuals = new String[] {map.get("AaAaBB"), map.get("BBAaAa")};
+		
+		assertArrayEquals(expecteds, actuals);
+	}
 }
