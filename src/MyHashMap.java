@@ -1,16 +1,3 @@
-class TestClass {
-	int age;
-	String name;
-	
-	TestClass(int age, String name) {
-		this.age = age;
-		this.name = name;
-	}
-	
-	public String toString() {
-		return String.format("%s is %d years old.", name, age);
-	}
-}
 
 public class MyHashMap<V> {
 	private MyHashEntry[] hashtable;
@@ -84,6 +71,7 @@ public class MyHashMap<V> {
 		}
 	};
 	
+	@SuppressWarnings("unchecked")
 	public V get(String key) {
 		int ind = findInd(key);
 		if (hashtable[ind] == null) return null;
@@ -101,6 +89,7 @@ public class MyHashMap<V> {
 		return curr.key.equals(key)? (V) curr.value : null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public V delete(String key) {
 		int ind = findInd(key);
 		
@@ -140,17 +129,6 @@ public class MyHashMap<V> {
 	
 	public double load() {
 		return (1.0 * size) / capacity;
-	}
-	
-	public static void main(String[] args) {
-		MyHashMap<TestClass> map = new MyHashMap<TestClass>(16);
-		System.out.println(map.set("thisismykey", new TestClass(22, "Derrick")));
-		System.out.println(map.set("thisismykey", new TestClass(21, "Chloe")));
-		System.out.println(map.set("thisisanotherkey", new TestClass(21, "Chloe")));
-		System.out.println(map.load());
-		System.out.println(map.set("thisisyetanotherkey", new TestClass(100, "OldMan")));
-		System.out.println(map.set("whathappens?", new TestClass(1, "baby")));
-		System.out.println(map.load());
 	}
 
 }
