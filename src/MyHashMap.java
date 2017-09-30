@@ -1,3 +1,6 @@
+/**
+ * @author     Derrick Lee <stjohndlee@gmail.com>
+ */
 
 public class MyHashMap<V> {
 	private MyHashEntry[] hashtable;
@@ -36,26 +39,29 @@ public class MyHashMap<V> {
 		return ((n % m) + m) % m; // to deal with negative hash codes
 	} 
 	
+	/**
+	 * @param key    string key to be use in the map. In case of duplicate keys, the former value is overridden
+	 * @param value  value associated with the key. Could be any Java object
+	 * @return       true if insertion succeeds, false otherwise
+	 */
 	public boolean set(String key, V value) {
 		// if the hash map is full, reject
 		if (size == capacity) return false;
 		
 		int ind = findInd(key);
 		
-		// no element in the bucket
-		if (hashtable[ind] == null) {
+		if (hashtable[ind] == null) {	// no element in the bucket
 			hashtable[ind] = new MyHashEntry(key, (Object) value);
 			size++;
 			return true;
-		} else { 
-			// if there is an element in the bucket
+		} else {    // if there is an element in the bucket
 			MyHashEntry curr = hashtable[ind];
 			while (curr.next != null) {
 				if (!curr.key.equals(key)) {
 					curr = curr.next;
 				} else {
-					// there is an element with the same key
-					// so override it
+					// if there is an element with the same key
+					// override it
 					curr.value = (Object) value;
 					return true;
 				}
@@ -69,8 +75,12 @@ public class MyHashMap<V> {
 			}
 			return true;
 		}
-	};
+	}
 	
+	/**
+	 * @param key   key for retrieving the value associated with it
+	 * @return      value associated with the key
+	 */
 	@SuppressWarnings("unchecked")
 	public V get(String key) {
 		int ind = findInd(key);
@@ -82,13 +92,17 @@ public class MyHashMap<V> {
 				curr = curr.next;
 			} else {
 				// if the match is found, return the value
-				return (V) curr.value;
+				return (V) curr.value; // unchecked casting
 			}
 		}
 		// reached the end of the linked list
 		return curr.key.equals(key)? (V) curr.value : null;
 	}
 	
+	/**
+	 * @param key   key for deleting the pair
+	 * @return      value of the key-value pair that's been deleted, null if such pair doesn't exist
+	 */
 	@SuppressWarnings("unchecked")
 	public V delete(String key) {
 		int ind = findInd(key);
@@ -107,7 +121,8 @@ public class MyHashMap<V> {
 				// if the match is found, delete the entry from the linked list and return the value
 				prev.next = curr.next;
 				curr.next = null;
-				return (V) curr.value;
+				size--;
+				return (V) curr.value; // unchecked casting
 			}
 		}
 		
@@ -119,14 +134,19 @@ public class MyHashMap<V> {
 			if (prev == null) {
 				// if this was a single-element linked list
 				hashtable[ind] = null;
-				return (V) curr.value;
+				size--;
+				return (V) curr.value; // unchecked casting
 			} else {
 				prev.next = null;
-				return (V) curr.value;
+				size--;
+				return (V) curr.value; // unchecked casting
 			}
 		}
 	}
 	
+	/**
+	 * @return   the current load factor of the hash map
+	 */
 	public double load() {
 		return (1.0 * size) / capacity;
 	}
