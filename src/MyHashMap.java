@@ -49,32 +49,36 @@ public class MyHashMap<V> {
 		if (size == capacity) return false;
 		
 		int ind = findInd(key);
+		MyHashEntry curr = hashtable[ind];
 		
-		if (hashtable[ind] == null) {	// no element in the bucket
-			hashtable[ind] = new MyHashEntry(key, (Object) value);
+		MyHashEntry entry = new MyHashEntry(key, (Object) value);
+		
+		if (curr == null) {	// there is no element in the bucket
+			hashtable[ind] = entry;
 			size++;
-			return true;
-		} else {    // if there is an element in the bucket
-			MyHashEntry curr = hashtable[ind];
-			while (curr.next != null) {
+		} else {    // if there exists an element in the bucket
+			while (curr != null) {
 				if (!curr.key.equals(key)) {
-					curr = curr.next;
+					// keep moving down the linked list
+					if (curr.next != null) {
+						curr = curr.next;
+					} else { 
+						// reached the end of the linked list
+						// so insert it at the end
+						curr.next = entry;
+						size++;
+						break;
+					}
 				} else {
 					// if there is an element with the same key
 					// override it
 					curr.value = (Object) value;
-					return true;
+					break;
 				}
 			}
-			// reached the end of the linked list
-			if (!curr.key.equals(key)) {
-				curr.next = new MyHashEntry(key, (Object) value);
-				size++;
-			} else {
-				curr.value = (Object) value;
-			}
-			return true;
 		}
+		
+		return true;
 	}
 	
 	/**
@@ -85,18 +89,26 @@ public class MyHashMap<V> {
 	public V get(String key) {
 		int ind = findInd(key);
 		if (hashtable[ind] == null) return null;
+		
 		MyHashEntry curr = hashtable[ind];
-		while (curr.next != null) {
+		while (curr != null) {
 			if (!curr.key.equals(key)) {
-				// if the keys don't match, keep moving down the linked list
-				curr = curr.next;
+				// keep moving down the linked list
+				if (curr.next != null) {
+					curr = curr.next;
+				} else {
+					// reached the end of the linked list
+					// so return null
+					return null;
+				}
 			} else {
 				// if the match is found, return the value
 				return (V) curr.value; // unchecked casting
 			}
 		}
-		// reached the end of the linked list
-		return curr.key.equals(key)? (V) curr.value : null;
+		
+		// shouldn't reach here
+		return null;
 	}
 	
 	/**
@@ -106,42 +118,38 @@ public class MyHashMap<V> {
 	@SuppressWarnings("unchecked")
 	public V delete(String key) {
 		int ind = findInd(key);
-		
 		if (hashtable[ind] == null) return null;
 		
 		MyHashEntry curr = hashtable[ind];
 		MyHashEntry prev = null;
 		
-		while (curr.next != null) {
+		while (curr != null) {
 			if (!curr.key.equals(key)) {
-				// if the keys don't match, keep moving down the linked list
-				curr = curr.next;
-				prev = curr;
+				// keep moving down the linked list
+				if (curr.next != null){
+					prev = curr;
+					curr = curr.next;
+				} else {
+					// reached the end of the linked list
+					// so return null
+					return null;
+				}
 			} else {
 				// if the match is found, delete the entry from the linked list and return the value
-				prev.next = curr.next;
-				curr.next = null;
+				if (prev == null) {
+					// this was a single-element linked list
+					hashtable[ind] = null;
+				} else {
+					prev.next = curr.next;
+					curr.next = null;
+				}
 				size--;
 				return (V) curr.value; // unchecked casting
 			}
 		}
 		
-		// reached the end of the linked list
-		if (!curr.key.equals(key)) {
-			// if it's not a match
-			return null;
-		} else {
-			if (prev == null) {
-				// if this was a single-element linked list
-				hashtable[ind] = null;
-				size--;
-				return (V) curr.value; // unchecked casting
-			} else {
-				prev.next = null;
-				size--;
-				return (V) curr.value; // unchecked casting
-			}
-		}
+		// shouldn't reach here
+		return null;
 	}
 	
 	/**
