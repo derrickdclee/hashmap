@@ -51,8 +51,15 @@ public class MyTests {
 	@Test
 	public void testWithCustomObjectAsValue() {
 		MyHashMap<MyObject> map = new MyHashMap<>(4);
-		MyObject o1 = new MyObject();
+		MyObject o1 = new MyObject(1);
+		MyObject o2 = new MyObject(2);
+		MyObject o3 = new MyObject(3);
+		MyObject o4 = new MyObject(4);
+		
 		map.set("k1", o1);
+		map.set("k2", o2);
+		map.set("k3", o3);
+		map.set("k4", o4);
 		assertSame(o1, map.get("k1"));
 	}
 	
